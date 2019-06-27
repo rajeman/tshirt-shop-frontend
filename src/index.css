@@ -11,3 +11,32 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.color-primary {
+  color: #e83e8c;
+}
+
+.background-primary {
+  background: #e83e8c;
+}
+
+.color-secondary {
+  color: #888888;
+}
+
+.background-secondary {
+  background: #888888;
+}
+
+.btn-secondary {
+  background-color: #f2f2f2 !important;
+  border: none !important;
+}
+
+.color-extra {
+  color: #777777;
+}
+
+.home-content {
+  padding: 2%;
+}

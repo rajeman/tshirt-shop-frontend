@@ -1,0 +1,15 @@
+.item-card {
+  width: 5rem;
+}
+
+.form-group {
+  text-align: left;
+}
+
+.btn-secondary:hover {
+  background-color: #e83e8c !important;
+}
+
+.btn-secondary:hover .color-extra {
+  color: #fff;
+}

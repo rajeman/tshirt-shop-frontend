@@ -1,0 +1,37 @@
+.pagination-parent {
+  transform: scale(0.7);
+}
+
+.page-link {
+  color: #333;
+  margin: 3px;
+  border: none;
+  background: transparent;
+  font-weight: bold;
+}
+
+.pagination-active {
+  background: #e83e8c;
+  border-radius: 50%;
+  color: #fff;
+}
+
+.pagination-active:hover {
+  background: #e83e8c;
+  color: #fff;
+  cursor: default;
+}
+
+.page-item:last-child .page-link {
+  border-top-left-radius: none;
+  border-bottom-left-radius: none;
+  border-radius: 0%;
+}
+
+.page-item:first-child .page-link {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+  border-top-right-radius: none;
+  border-bottom-right-radius: none;
+  border-radius: 0%;
+}
