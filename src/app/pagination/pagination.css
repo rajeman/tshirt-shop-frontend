@@ -10,6 +10,10 @@
   font-weight: bold;
 }
 
+.page-link:focus {
+  box-shadow: none;
+}
+
 .pagination-active {
   background: #e83e8c;
   border-radius: 50%;
@@ -34,4 +38,9 @@
   border-top-right-radius: none;
   border-bottom-right-radius: none;
   border-radius: 0%;
+}
+
+
+.invisible {
+  visibility: hidden;
 }
