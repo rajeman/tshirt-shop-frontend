@@ -10,7 +10,8 @@ const mapStateToProps = ({ home: { status, products } }) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchProducts: (limit, page) => dispatch(fetchProducts(limit, page))
+    fetchProducts: (limit, page, filter) =>
+      dispatch(fetchProducts(limit, page, filter))
   };
 };
 

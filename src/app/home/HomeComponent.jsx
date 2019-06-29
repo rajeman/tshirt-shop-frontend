@@ -8,19 +8,22 @@ import { Spinner } from '../loaders';
 import constants from './constants';
 
 let parentContext;
+const defaultPage = 1;
 class HomeComponent extends React.Component {
   constructor(props) {
     super(props);
     parentContext = this;
     this.state = {
       limit: constants.DEFAULT_PRODUCTS_LIMIT,
-      page: 1
+      page: defaultPage,
+      filter: constants.FILTER_NONE
     };
   }
 
   componentDidMount() {
     const { fetchProducts } = this.props;
-    fetchProducts(constants.DEFAULT_PRODUCTS_LIMIT, 1);
+    const { filter } = this.state;
+    fetchProducts(constants.DEFAULT_PRODUCTS_LIMIT, 1, filter);
   }
 
   setCurrentPage(page) {
@@ -31,19 +34,33 @@ class HomeComponent extends React.Component {
     const {
       productsState: { products }
     } = parentContext.props;
-    if (products[page]) {
-      parentContext.setCurrentPage(page);
-    } else {
-      parentContext.props.fetchProducts(parentContext.state.limit, page);
-      parentContext.setCurrentPage(page);
+    const { filter, limit } = parentContext.state;
+    if (!products[filter][page]) {
+      parentContext.props.fetchProducts(limit, page, filter);
     }
+    parentContext.setCurrentPage(page);
+  }
+
+  handleFilter(filter) {
+    const {
+      productsState: { products }
+    } = parentContext.props;
+    const { page, limit } = parentContext.state;
+    if (!products[filter]) {
+      parentContext.props.fetchProducts(limit, page, filter);
+    }
+    parentContext.setState({ filter, page: defaultPage });
   }
 
   render() {
     const {
       productsState: { status, products }
     } = this.props;
-    const productsAvailable = status === constants.PRODUCTS_FETCH_SUCCESS;
+    const { filter, page, limit } = this.state;
+    const productsAvailable =
+      status === constants.PRODUCTS_FETCH_SUCCESS &&
+      products[filter] &&
+      products[filter][page];
     const productsLoading = status === constants.PRODUCTS_FETCHING;
     return (
       <div>
@@ -53,9 +70,9 @@ class HomeComponent extends React.Component {
           {productsAvailable && (
             <PaginationComponent
               fetchNewPage={this.fetchNewPage}
-              page={this.state.page}
-              limit={this.state.limit}
-              count={products[this.state.page].products.count}
+              page={page}
+              limit={limit}
+              count={products[filter][page].products.count}
             />
           )}
         </Row>
@@ -64,7 +81,10 @@ class HomeComponent extends React.Component {
           <Row>
             <Col sm="3" className="text-center">
               <Col sm="12" className="filter-card-wrapper">
-                <FilterCard className="filter-card" />
+                <FilterCard
+                  className="filter-card"
+                  handleFilter={this.handleFilter}
+                />
               </Col>
             </Col>
             <Col sm="9">
@@ -79,7 +99,7 @@ class HomeComponent extends React.Component {
               <Col sm="12">
                 <Row className="justify-content-start">
                   {productsAvailable &&
-                    products[this.state.page].products.rows.map(product => (
+                    products[filter][page].products.rows.map(product => (
                       <Col
                         md="4"
                         sm="6"
@@ -98,9 +118,9 @@ class HomeComponent extends React.Component {
             {productsAvailable && (
               <PaginationComponent
                 fetchNewPage={this.fetchNewPage}
-                page={this.state.page}
-                limit={this.state.limit}
-                count={products[this.state.page].products.count}
+                page={page}
+                limit={limit}
+                count={products[filter][page].products.count}
                 setCurrentPage={this.setCurrentPage}
               />
             )}

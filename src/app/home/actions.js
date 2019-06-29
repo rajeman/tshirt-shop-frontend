@@ -9,7 +9,61 @@ const productsState = (status, products) => ({
   products
 });
 
-const fetchProducts = (limit, page) => async dispatch => {
+const fetchProducts = (
+  limit,
+  page,
+  filter = constants.FILTER_NONE
+) => async dispatch => {
+  let urlPath;
+  switch (filter) {
+    case constants.FILTER_SEARCH: {
+      urlPath = '/search';
+      break;
+    }
+    case constants.FILTER_DEPARTMENT_REGIONAL: {
+      urlPath = `/inDepartment/1/`;
+      break;
+    }
+    case constants.FILTER_CATEGORY_FRENCH: {
+      urlPath = `/inCategory/1/`;
+      break;
+    }
+    case constants.FILTER_CATEGORY_ITALIAN: {
+      urlPath = `/inCategory/2/`;
+      break;
+    }
+    case constants.FILTER_CATEGORY_IRISH: {
+      urlPath = `/inCategory/3/`;
+      break;
+    }
+    case constants.FILTER_DEPARTMENT_NATURE: {
+      urlPath = `/inDepartment/2/`;
+      break;
+    }
+    case constants.FILTER_CATEGORY_ANIMAL: {
+      urlPath = `/inCategory/4/`;
+      break;
+    }
+    case constants.FILTER_CATEGORY_FLOWER: {
+      urlPath = `/inCategory/5/`;
+      break;
+    }
+    case constants.FILTER_DEPARTMENT_SEASONAL: {
+      urlPath = `/inDepartment/3/`;
+      break;
+    }
+    case constants.FILTER_CATEGORY_CHRISTMAS: {
+      urlPath = `/inCategory/6/`;
+      break;
+    }
+    case constants.FILTER_CATEGORY_VALENTINE: {
+      urlPath = `/inCategory/7/`;
+      break;
+    }
+    default: {
+      urlPath = '/';
+    }
+  }
   dispatch(
     productsState(constants.PRODUCTS_FETCHING, {
       page,
@@ -18,11 +72,12 @@ const fetchProducts = (limit, page) => async dispatch => {
   );
   try {
     const response = await axios.get(
-      `${productsUrl}/?limit=${limit}&page=${page}`
+      `${productsUrl}${urlPath}?limit=${limit}&page=${page}`
     );
     dispatch(
       productsState(constants.PRODUCTS_FETCH_SUCCESS, {
         page,
+        filter,
         products: response.data
       })
     );
