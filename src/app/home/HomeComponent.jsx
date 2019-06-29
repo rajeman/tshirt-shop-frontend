@@ -16,7 +16,8 @@ class HomeComponent extends React.Component {
     this.state = {
       limit: constants.DEFAULT_PRODUCTS_LIMIT,
       page: defaultPage,
-      filter: constants.FILTER_NONE
+      filter: constants.FILTER_NONE,
+      word: ''
     };
   }
 
@@ -34,9 +35,9 @@ class HomeComponent extends React.Component {
     const {
       productsState: { products }
     } = parentContext.props;
-    const { filter, limit } = parentContext.state;
+    const { filter, limit, word } = parentContext.state;
     if (!products[filter][page]) {
-      parentContext.props.fetchProducts(limit, page, filter);
+      parentContext.props.fetchProducts(limit, page, filter, word);
     }
     parentContext.setCurrentPage(page);
   }
@@ -45,11 +46,18 @@ class HomeComponent extends React.Component {
     const {
       productsState: { products }
     } = parentContext.props;
-    const { page, limit } = parentContext.state;
+    const { limit } = parentContext.state;
     if (!products[filter]) {
-      parentContext.props.fetchProducts(limit, page, filter);
+      parentContext.props.fetchProducts(limit, defaultPage, filter);
     }
-    parentContext.setState({ filter, page: defaultPage });
+    parentContext.setState({ filter, page: defaultPage, word: '' });
+  }
+
+  handleSearch(filter, word) {
+    const { limit } = parentContext.state;
+    const { fetchProducts } = parentContext.props;
+    fetchProducts(limit, defaultPage, filter, word);
+    parentContext.setState({ filter, page: defaultPage, word });
   }
 
   render() {
@@ -84,6 +92,7 @@ class HomeComponent extends React.Component {
                 <FilterCard
                   className="filter-card"
                   handleFilter={this.handleFilter}
+                  handleSearch={this.handleSearch}
                 />
               </Col>
             </Col>

@@ -9,7 +9,8 @@ export default class FilterCard extends React.Component {
     parentContext = this;
     this.state = {
       filter: constants.FILTER_NONE,
-      subFilter: constants.FILTER_NONE
+      subFilter: constants.FILTER_NONE,
+      word: ''
     };
   }
 
@@ -18,8 +19,9 @@ export default class FilterCard extends React.Component {
       props: { handleFilter }
     } = parentContext;
     handleFilter(filter);
-    this.setState({
-      filter
+    parentContext.setState({
+      filter,
+      word: ''
     });
   }
 
@@ -34,16 +36,36 @@ export default class FilterCard extends React.Component {
       handleFilter(subFilter);
     }
     parentContext.setState({
-      subFilter
+      subFilter,
+      word: ''
     });
   }
 
   render() {
     const { filter, subFilter } = this.state;
+    const { handleSearch } = this.props;
     return (
       <Form>
         <FormGroup>
-          <Input type="text" name="search" placeholder="Search" />
+          <Input
+            type="search"
+            name="search"
+            placeholder="Search"
+            value={this.state.word}
+            onChange={e => {
+              const { value } = e.target;
+              this.setState(
+                {
+                  filter: constants.FILTER_NONE,
+                  subFilter: constants.FILTER_NONE,
+                  word: value
+                },
+                () => {
+                  handleSearch(constants.FILTER_SEARCH, this.state.word);
+                }
+              );
+            }}
+          />
         </FormGroup>
         <FormGroup>
           <Label for="Department">

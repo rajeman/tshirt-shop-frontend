@@ -3,6 +3,9 @@ import constants from './constants';
 
 const productsUrl = `${process.env.REACT_APP_API_URL}/products`;
 
+const CancelToken = axios.CancelToken;
+let cancel;
+
 const productsState = (status, products) => ({
   type: constants.SET_PRODUCTS_STATE,
   status,
@@ -12,12 +15,13 @@ const productsState = (status, products) => ({
 const fetchProducts = (
   limit,
   page,
-  filter = constants.FILTER_NONE
+  filter = constants.FILTER_NONE,
+  word = ''
 ) => async dispatch => {
   let urlPath;
   switch (filter) {
     case constants.FILTER_SEARCH: {
-      urlPath = '/search';
+      urlPath = '/';
       break;
     }
     case constants.FILTER_DEPARTMENT_REGIONAL: {
@@ -70,9 +74,15 @@ const fetchProducts = (
       products: {}
     })
   );
+  cancel && cancel();
   try {
     const response = await axios.get(
-      `${productsUrl}${urlPath}?limit=${limit}&page=${page}`
+      `${productsUrl}${urlPath}?limit=${limit}&page=${page}&query_string=${word}`,
+      {
+        cancelToken: new CancelToken(function executor(c) {
+          cancel = c;
+        })
+      }
     );
     dispatch(
       productsState(constants.PRODUCTS_FETCH_SUCCESS, {
