@@ -6,8 +6,8 @@ import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Home } from './app';
 import * as serviceWorker from './serviceWorker';
+import { AppRouter } from './app';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
@@ -17,7 +17,7 @@ const store = createStore(
 
 ReactDOM.render(
   <Provider store={store}>
-    <Home />
+    <AppRouter />
   </Provider>,
   document.getElementById('root')
 );

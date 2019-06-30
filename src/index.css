@@ -37,6 +37,7 @@ code {
   color: #777777;
 }
 
-.home-content {
+.home-content,
+.product-content {
   padding: 2%;
 }
