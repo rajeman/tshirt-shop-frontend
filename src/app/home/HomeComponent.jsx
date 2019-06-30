@@ -88,25 +88,27 @@ class HomeComponent extends React.Component {
         </Row>
         <br />
         <div className="home-content">
+          {productsLoading && (
+            <Row
+              sm="12"
+              className="h-100 justify-content-center align-items-center"
+            >
+              <Spinner />
+            </Row>
+          )}
           <Row>
-            <Col sm="3" className="text-center">
-              <Col sm="12" className="filter-card-wrapper">
-                <FilterCard
-                  className="filter-card"
-                  handleFilter={this.handleFilter}
-                  handleSearch={this.handleSearch}
-                />
+            {productsAvailable && (
+              <Col sm="3" className="text-center">
+                <Col sm="12" className="filter-card-wrapper">
+                  <FilterCard
+                    className="filter-card"
+                    handleFilter={this.handleFilter}
+                    handleSearch={this.handleSearch}
+                  />
+                </Col>
               </Col>
-            </Col>
+            )}
             <Col sm="9">
-              {productsLoading && (
-                <Row
-                  sm="12"
-                  className="h-100 justify-content-center align-items-center"
-                >
-                  <Spinner />
-                </Row>
-              )}
               <Col sm="12">
                 <Row className="justify-content-start">
                   {productsAvailable &&
