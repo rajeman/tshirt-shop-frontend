@@ -1,7 +1,6 @@
 import React from 'react';
 import { Row, Col } from 'reactstrap';
 import './home.css';
-import NavbarComponent from '../navbar/NavbarComponent';
 import PaginationComponent from '../pagination/PaginationComponent';
 import { ItemCard, FilterCard } from '../cards';
 import { Spinner } from '../loaders';
@@ -24,7 +23,11 @@ class HomeComponent extends React.Component {
   componentDidMount() {
     const { fetchProducts } = this.props;
     const { filter } = this.state;
-    fetchProducts(constants.DEFAULT_PRODUCTS_LIMIT, 1, filter);
+    const {
+      productsState: { status }
+    } = this.props;
+    status !== constants.PRODUCTS_FETCH_SUCCESS &&
+      fetchProducts(constants.DEFAULT_PRODUCTS_LIMIT, 1, filter);
   }
 
   setCurrentPage(page) {
@@ -72,7 +75,6 @@ class HomeComponent extends React.Component {
     const productsLoading = status === constants.PRODUCTS_FETCHING;
     return (
       <div>
-        <NavbarComponent />
         <br />
         <Row className="justify-content-center">
           {productsAvailable && (
