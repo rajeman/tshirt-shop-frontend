@@ -11,7 +11,7 @@ import {
 import './home.css';
 import PaginationComponent from '../pagination/PaginationComponent';
 import { ItemCard, FilterCard } from '../cards';
-import CartComponent from '../cart/CartComponent';
+import CartContainer from '../cart/CartContainer';
 import { Spinner } from '../loaders';
 import constants from './constants';
 
@@ -122,6 +122,16 @@ class HomeComponent extends React.Component {
                   handleSearch={this.handleSearch}
                   productsAvailable={productsAvailable}
                 />
+                <Button
+                  type="submit"
+                  className="h-100 btn-secondary-active b-checkout float-right mr-1"
+                  onClick={e => {
+                    e.preventDefault();
+                    this.toggle();
+                  }}
+                >
+                  <span className="color-extra bt-checkout-text">Cart</span>
+                </Button>
               </Col>
             </Col>
 
@@ -162,9 +172,9 @@ class HomeComponent extends React.Component {
           toggle={this.toggle}
           className={this.props.className}
         >
-          <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+          <ModalHeader toggle={this.toggle}>Cart Items</ModalHeader>
           <ModalBody>
-            <CartComponent />
+            <CartContainer />
           </ModalBody>
           <ModalFooter>
             <Button

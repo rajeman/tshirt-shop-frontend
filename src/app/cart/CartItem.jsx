@@ -1,34 +1,39 @@
 import React from 'react';
 import { FormGroup, Input } from 'reactstrap';
 
-export default () => {
+export default ({ product }) => {
+  console.log(`${process.env.PUBLIC_URL}/images/${product.image}`);
   return (
     <tr className="cart-item-row">
       <td className="text-center">
         <img
-          top
-          src={`${process.env.PUBLIC_URL}/images/alsace-2.gif`}
+          src={`${process.env.PUBLIC_URL}/images/${product.image}`}
           alt="Card Cover"
           className="cart-product-image"
         />
-        <div className="mt-2 color-extra">Gallic Cock</div>
+        <div className="mt-2 color-extra">{product.name}</div>
       </td>
       <td className="text-center">
         <div className="d-flex flex-column justify-content-center h-100">
-          <span className="p-2 color-extra">Size: S</span>
-          <span className="p-2 color-extra">Color: White</span>
+          <span className="p-2 color-extra">{product.attributes}</span>
         </div>
       </td>
       <td className="text-center">
         <div className="d-flex flex-column justify-content-center align-items-center h-100">
           <FormGroup className="mt-4">
-            <Input type="number" name="p-quantity" className="p-quantity" />
+            <Input
+              type="number"
+              name="p-quantity"
+              className="p-quantity"
+              value={product.quantity}
+              readOnly
+            />
           </FormGroup>
         </div>
       </td>
       <td className="text-center">
         <div className="d-flex flex-column justify-content-center align-items-center h-100">
-          <span className="color-extra"> $18</span>
+          <span className="color-extra"> {product.subtotal}</span>
         </div>
       </td>
       <td className="text-center">
