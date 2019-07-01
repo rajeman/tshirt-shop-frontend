@@ -1,8 +1,17 @@
 import React from 'react';
-import { Row, Col } from 'reactstrap';
+import {
+  Row,
+  Col,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button
+} from 'reactstrap';
 import './home.css';
 import PaginationComponent from '../pagination/PaginationComponent';
 import { ItemCard, FilterCard } from '../cards';
+import CartComponent from '../cart/CartComponent';
 import { Spinner } from '../loaders';
 import constants from './constants';
 
@@ -16,8 +25,10 @@ class HomeComponent extends React.Component {
       limit: constants.DEFAULT_PRODUCTS_LIMIT,
       page: defaultPage,
       filter: constants.FILTER_NONE,
-      word: ''
+      word: '',
+      modal: false
     };
+    this.toggle = this.toggle.bind(this);
   }
 
   componentDidMount() {
@@ -61,6 +72,12 @@ class HomeComponent extends React.Component {
     const { fetchProducts } = parentContext.props;
     fetchProducts(limit, defaultPage, filter, word);
     parentContext.setState({ filter, page: defaultPage, word });
+  }
+
+  toggle() {
+    this.setState(prevState => ({
+      modal: !prevState.modal
+    }));
   }
 
   render() {
@@ -140,6 +157,27 @@ class HomeComponent extends React.Component {
           </Row>
           <br />
         </div>
+        <Modal
+          isOpen={this.state.modal}
+          toggle={this.toggle}
+          className={this.props.className}
+        >
+          <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+          <ModalBody>
+            <CartComponent />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              type="submit"
+              className="h-100 btn-secondary-active b-checkout float-right mr-1"
+              onClick={e => {
+                e.preventDefault();
+              }}
+            >
+              <span className="color-extra bt-checkout-text">Checkout</span>
+            </Button>
+          </ModalFooter>
+        </Modal>
       </div>
     );
   }

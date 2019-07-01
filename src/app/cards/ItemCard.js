@@ -7,7 +7,7 @@ import './cards.css';
 const ItemCard = ({ product }) => {
   return (
     <div>
-      <Link to={`/${product.product_id}`} className="product-link">
+      <Link to={`/products/${product.product_id}`} className="product-link">
         <Card className="p-4 mb-5">
           <CardImg
             top

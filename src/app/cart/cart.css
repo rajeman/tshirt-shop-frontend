@@ -1,0 +1,41 @@
+.cart-product-image {
+  max-width: 80%;
+  max-height: 80%;
+  height: auto;
+}
+
+.cart-product-image:hover {
+  cursor: pointer;
+}
+
+.cart-product-body {
+  padding: 5px;
+}
+
+table {
+  height: 1px;
+}
+
+.fa-times {
+  font-size: 30px;
+  color: #e66767;
+}
+
+.fa-times:hover {
+  cursor: pointer;
+}
+
+.cart-product-name {
+  font-size: 0.8rem;
+}
+
+.cart-item-row:hover {}
+
+
+.table>tbody>tr>th,
+.table>tfoot>tr>td,
+.table>tfoot>tr>th,
+.table>thead>tr>td,
+.table>thead>tr>th {
+  border: 0
+}
