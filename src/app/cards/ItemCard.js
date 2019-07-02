@@ -23,8 +23,25 @@ const ItemCard = ({ product }) => {
               {product.name}
             </CardTitle>
 
-            <CardSubtitle className="color-primary font-weight-bold">
-              ${product.price}
+            <CardSubtitle>
+              <div className="p-price mb-3">
+                <span className="p-price-actual color-primary font-weight-bold">
+                  $
+                  {product.discounted_price === '0.00'
+                    ? product.price
+                    : (
+                        parseFloat(product.price) -
+                        parseFloat(product.discounted_price)
+                      ).toFixed(2)}{' '}
+                </span>
+                <span className="p-price-old color-extra">
+                  {product.discounted_price !== '0.00' && (
+                    <span>
+                      $<s>{product.discounted_price}</s>
+                    </span>
+                  )}
+                </span>
+              </div>
             </CardSubtitle>
           </CardBody>
         </Card>

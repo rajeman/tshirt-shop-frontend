@@ -42,6 +42,19 @@ const cartReducer = (state = defaultState, action) => {
         })
       };
     }
+
+    case constants.SET_CART_DELETE_STATE: {
+      const { status, itemId } = action;
+      const { cart } = state;
+      const newItems = cart.filter(item => item.item_id !== itemId);
+      return {
+        ...state,
+        status,
+        cart: newItems.sort((a, b) => {
+          return parseInt(a.item_id - parseInt(b.item_id));
+        })
+      };
+    }
     default:
       return state;
   }

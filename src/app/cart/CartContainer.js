@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import actions from './actions';
 import CartComponent from './CartComponent';
 
-const { fetchCart, updateCart } = actions;
+const { fetchCart, updateCart, deleteCartItem } = actions;
 
 const mapStateToProps = ({ cart: { status, cart } }) => {
   return { cartState: { status, cart } };
@@ -11,7 +11,8 @@ const mapStateToProps = ({ cart: { status, cart } }) => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchCart: cartId => dispatch(fetchCart(cartId)),
-    updateCart: item => dispatch(updateCart(item))
+    updateCart: item => dispatch(updateCart(item)),
+    deleteCartItem: itemId => dispatch(deleteCartItem(itemId))
   };
 };
 

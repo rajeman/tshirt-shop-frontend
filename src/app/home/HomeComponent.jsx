@@ -121,19 +121,6 @@ class HomeComponent extends React.Component {
                   handleSearch={this.handleSearch}
                   productsAvailable={productsAvailable}
                 />
-                <Button
-                  type="submit"
-                  className="h-100 btn-secondary-active b-checkout float-right mr-1"
-                  onClick={e => {
-                    e.preventDefault();
-                    this.toggle();
-                    this.setState({
-                      checkoutButton: true
-                    });
-                  }}
-                >
-                  <span className="color-extra bt-checkout-text">Cart</span>
-                </Button>
               </Col>
             </Col>
 

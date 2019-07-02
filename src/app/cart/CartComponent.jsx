@@ -1,17 +1,21 @@
 import React from 'react';
-import { Table, Button } from 'reactstrap';
+import { Table, Button, Card, CardBody, CardText, CardImg } from 'reactstrap';
 import CartItem from './CartItem';
 import constants from './constants';
 import { Spinner } from '../loaders';
+import DeleteModal from '../modal/ModalComponent';
 import './cart.css';
 
 class CartComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      totalPrice: ''
+      totalPrice: '',
+      deleteModal: false,
+      itemId: 0
     };
     this.updateCartItem = this.updateCartItem.bind(this);
+    this.confirmItemDeletion = this.confirmItemDeletion.bind(this);
   }
 
   componentDidMount() {
@@ -27,6 +31,18 @@ class CartComponent extends React.Component {
     updateCart(item);
   }
 
+  confirmItemDeletion(itemId) {
+    this.setState({
+      deleteModal: true,
+      itemId
+    });
+  }
+
+  doDeleteItem() {
+    const { deleteCartItem } = this.props;
+    deleteCartItem(this.state.itemId);
+  }
+
   render() {
     const {
       cartState: { cart, status }
@@ -34,90 +50,135 @@ class CartComponent extends React.Component {
     const cartItemsAvailable = status === constants.CART_FETCH_SUCCESS;
     const cartFetching =
       status === constants.CART_FETCHING || status === constants.CART_UPDATING;
+    const emptyCart = cartItemsAvailable && cart.length === 0;
     return (
-      <div class="container">
+      <div className="container">
         {cartFetching && (
           <div className="d-flex justify-content-center">
             <Spinner />
           </div>
         )}
-        {cartItemsAvailable && (
-          <Table className="">
-            <thead>
-              <tr>
-                <th className="text-center">Item</th>
-                <th className="text-center">Options</th>
-                <th className="text-center">Quantity</th>
-                <th className="text-center">Price</th>
-                <th className="text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.map(product => {
-                this.totalPrice =
-                  this.totalPrice + parseFloat(product.subtotal);
-                return (
-                  <CartItem
-                    product={product}
-                    key={product.item_id}
-                    updateCartItem={this.updateCartItem}
-                    invalidateCheckout={this.invalidateCheckout}
-                  />
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td />
-                <td />
-                <td />
-                <td />
-                <td>
-                  {cartItemsAvailable && (
-                    <div className="cart-total text-muted">
-                      <span>Total Price:</span>{' '}
-                      <span className="color-primary mr-2">
-                        $
-                        {cart
-                          .reduce(
-                            (total, product) =>
-                              total + Number(product.subtotal),
-                            0
-                          )
-                          .toFixed(2)}
-                      </span>
-                    </div>
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <td />
-                <td />
-                <td />
-                <td />
-                <td>
-                  <div
-                    colSpan={3}
-                    className="d-flex justify-content-end flex-column"
-                  >
+        {emptyCart && (
+          <div className="d-flex justify-content-center">
+            <Card className="border-0">
+              <CardImg
+                top
+                width="100%"
+                src="https://cdn.dribbble.com/users/204955/screenshots/4930541/emptycart.png"
+                alt="Empty Cart"
+              />
+              <CardBody>
+                <CardText className="text-center">
+                  <span className="cart-empty-text">
+                    There are no items in your cart.
+                  </span>
+                </CardText>
+              </CardBody>
+            </Card>
+          </div>
+        )}
+        {cartItemsAvailable && cart.length > 0 && (
+          <div>
+            <Table className="">
+              <thead>
+                <tr>
+                  <th className="text-center">Item</th>
+                  <th className="text-center">Options</th>
+                  <th className="text-center">Quantity</th>
+                  <th className="text-center">Price</th>
+                  <th className="text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cart.map(product => {
+                  this.totalPrice =
+                    this.totalPrice + parseFloat(product.subtotal);
+                  return (
+                    <CartItem
+                      product={product}
+                      key={product.item_id}
+                      updateCartItem={this.updateCartItem}
+                      confirmItemDeletion={this.confirmItemDeletion}
+                    />
+                  );
+                })}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td />
+                  <td />
+                  <td />
+                  <td />
+                  <td>
                     {cartItemsAvailable && (
-                      <Button
-                        type="submit"
-                        className="h-100 btn-secondary-active b-checkout mr-1"
-                        onClick={e => {
-                          e.preventDefault();
-                        }}
-                      >
-                        <span className="color-extra bt-checkout-text">
-                          Checkout
+                      <div className="cart-total text-muted">
+                        <span>Total Price:</span>{' '}
+                        <span className="color-primary mr-2">
+                          $
+                          {cart
+                            .reduce(
+                              (total, product) =>
+                                total + Number(product.subtotal),
+                              0
+                            )
+                            .toFixed(2)}
                         </span>
-                      </Button>
+                      </div>
                     )}
-                  </div>
-                </td>
-              </tr>
-            </tfoot>
-          </Table>
+                  </td>
+                </tr>
+                <tr>
+                  <td />
+                  <td />
+                  <td />
+                  <td />
+                  <td>
+                    <div
+                      colSpan={3}
+                      className="d-flex justify-content-end flex-column"
+                    >
+                      {cartItemsAvailable && (
+                        <Button
+                          type="submit"
+                          className="h-100 btn-secondary-active b-checkout mr-1"
+                          onClick={e => {
+                            e.preventDefault();
+                          }}
+                        >
+                          <span className="color-extra bt-checkout-text">
+                            Checkout
+                          </span>
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              </tfoot>
+            </Table>
+            {this.state.deleteModal && (
+              <DeleteModal
+                payload={{
+                  title: 'Delete',
+                  body:
+                    'Are you sure you want to remove this item from your cart?',
+                  cancelText: 'Cancel',
+                  executeText: 'Delete',
+                  executeFunction: () => {
+                    this.doDeleteItem();
+                    this.setState({
+                      deleteModal: false,
+                      itemId: undefined
+                    });
+                  },
+                  cancelFunction: () => {
+                    this.setState({
+                      deleteModal: false
+                    });
+                  }
+                }}
+              />
+            )}
+          </div>
         )}
       </div>
     );

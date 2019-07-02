@@ -25,6 +25,7 @@ class ProductComponent extends React.Component {
     if (!product[productId]) {
       fetchProduct(productId);
     }
+    this.forceUpdate();
   }
 
   addToCart(attributes) {

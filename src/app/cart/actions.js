@@ -27,6 +27,12 @@ const cartItemState = (status, cartItem) => ({
   cartItem
 });
 
+const cartDeleteState = (status, itemId) => ({
+  type: constants.SET_CART_DELETE_STATE,
+  status,
+  itemId
+});
+
 const fetchCart = cartId => async dispatch => {
   dispatch(
     cartFetchState(constants.CART_FETCHING, {
@@ -105,4 +111,20 @@ const updateCart = item => async dispatch => {
   }
 };
 
-export default { cartFetchState, fetchCart, addToCart, updateCart };
+const deleteCartItem = itemId => async dispatch => {
+  cancelUpdate && cancelUpdate();
+  try {
+    await axios.delete(`${cartUrl}/removeProduct/${itemId}`);
+    dispatch(cartDeleteState(constants.CART_FETCH_SUCCESS, itemId));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default {
+  cartFetchState,
+  fetchCart,
+  addToCart,
+  updateCart,
+  deleteCartItem
+};

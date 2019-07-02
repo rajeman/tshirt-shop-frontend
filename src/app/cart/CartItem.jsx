@@ -5,12 +5,11 @@ class CartItem extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      quantity: '',
-      showUpdateButton: false
+      quantity: ''
     };
   }
   render() {
-    const { product, updateCartItem } = this.props;
+    const { product, updateCartItem, confirmItemDeletion } = this.props;
     return (
       <tr className="cart-item-row">
         <td className="text-center">
@@ -23,7 +22,12 @@ class CartItem extends React.Component {
         </td>
         <td className="text-center">
           <div className="d-flex flex-column justify-content-center h-100">
-            <span className="p-2 color-extra">{product.attributes}</span>
+            <span className="p-2 color-extra">
+              {product.attributes.split('|')[1].replace('_', ': ')}
+            </span>
+            <span className="p-2 color-extra">
+              {product.attributes.split('|')[0].replace('_', ': ')}
+            </span>
           </div>
         </td>
         <td className="text-center">
@@ -58,7 +62,11 @@ class CartItem extends React.Component {
             <span className="color-extra">
               {' '}
               {this.state.quantity
-                ? (this.state.quantity * product.price).toFixed(2)
+                ? (
+                    (parseFloat(product.price) -
+                      parseFloat(product.discounted_price)) *
+                    this.state.quantity
+                  ).toFixed(2)
                 : product.subtotal}
             </span>
           </div>
@@ -66,7 +74,12 @@ class CartItem extends React.Component {
         <td className="text-center">
           <div className="d-flex flex-column justify-content-center align-items-center h-100">
             <span>
-              <i className="fas fa-trash" />
+              <i
+                className="fas fa-trash"
+                onClick={() => {
+                  confirmItemDeletion(product.item_id);
+                }}
+              />
             </span>
           </div>
         </td>
