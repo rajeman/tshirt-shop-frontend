@@ -7,12 +7,14 @@ class ProductAttributes extends React.Component {
     super(props);
     this.state = {
       size: constants.SIZE_M,
-      color: constants.COLOR_RED
+      color: constants.COLOR_RED,
+      quantity: 1
     };
   }
 
   render() {
     const { size, color } = this.state;
+    const { addToCart, cartAdding } = this.props;
     return (
       <Form>
         <FormGroup>
@@ -21,7 +23,13 @@ class ProductAttributes extends React.Component {
           </Label>
         </FormGroup>
         <FormGroup>
-          <Input type="number" name="p-quantity" className="p-quantity" />
+          <Input
+            type="text"
+            value={this.state.quantity}
+            readOnly
+            name="p-quantity"
+            className="p-quantity"
+          />
         </FormGroup>
 
         <FormGroup className="mt-3">
@@ -225,10 +233,14 @@ class ProductAttributes extends React.Component {
         <div>
           <FormGroup check inline className="f-button-checkout">
             <Button
+              disabled={cartAdding}
               type="submit"
               className="h-100 btn-secondary-active b-checkout"
               onClick={e => {
                 e.preventDefault();
+                const { color, size } = this.state;
+                const attributes = `${color}|${size}`;
+                addToCart(attributes);
               }}
             >
               <span className="color-extra bt-checkout-text">Add to cart</span>

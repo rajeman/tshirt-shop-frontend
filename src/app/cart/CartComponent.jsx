@@ -8,13 +8,32 @@ import './cart.css';
 class CartComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      totalPrice: ''
+    };
+    this.updateCartItem = this.updateCartItem.bind(this);
+    this.invalidateCheckout = this.invalidateCheckout.bind(this);
+    this.props.updateCheckoutState(true);
   }
 
   componentDidMount() {
-    this.totalPrice = 0;
     const { fetchCart } = this.props;
-    fetchCart('5kzj31xgujxkfimpo');
+    const cartId = localStorage.getItem(constants.CART_ID);
+    if (cartId) {
+      fetchCart(cartId);
+    }
+  }
+
+  updateCartItem(item) {
+    const { updateCart } = this.props;
+    updateCart(item);
+  }
+
+  invalidateCheckout() {
+    this.setState({
+      totalPrice: ' '
+    });
+    this.props.updateCheckoutState(false);
   }
 
   render() {
@@ -22,9 +41,10 @@ class CartComponent extends React.Component {
       cartState: { cart, status }
     } = this.props;
     const cartItemsAvailable = status === constants.CART_FETCH_SUCCESS;
-    const cartFetching = status === constants.CART_FETCHING;
+    const cartFetching =
+      status === constants.CART_FETCHING || status === constants.CART_UPDATING;
     return (
-      <div cla>
+      <div>
         {cartFetching && (
           <div className="d-flex justify-content-center">
             <Spinner />
@@ -45,7 +65,14 @@ class CartComponent extends React.Component {
               {cart.map(product => {
                 this.totalPrice =
                   this.totalPrice + parseFloat(product.subtotal);
-                return <CartItem product={product} key={product.product_id} />;
+                return (
+                  <CartItem
+                    product={product}
+                    key={product.item_id}
+                    updateCartItem={this.updateCartItem}
+                    invalidateCheckout={this.invalidateCheckout}
+                  />
+                );
               })}
             </tbody>
           </Table>
@@ -53,7 +80,14 @@ class CartComponent extends React.Component {
         {cartItemsAvailable && (
           <div className="cart-total float-right text-muted">
             <span>Total Price:</span>{' '}
-            <span className="color-primary">${this.totalPrice.toFixed(2)}</span>
+            <span className="color-primary">
+              $
+              {this.state.totalPrice ||
+                cart.reduce(
+                  (total, product) => total + Number(product.subtotal),
+                  0
+                )}
+            </span>
           </div>
         )}
       </div>

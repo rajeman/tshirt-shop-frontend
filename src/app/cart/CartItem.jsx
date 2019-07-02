@@ -1,46 +1,83 @@
 import React from 'react';
 import { FormGroup, Input } from 'reactstrap';
 
-export default ({ product }) => {
-  console.log(`${process.env.PUBLIC_URL}/images/${product.image}`);
-  return (
-    <tr className="cart-item-row">
-      <td className="text-center">
-        <img
-          src={`${process.env.PUBLIC_URL}/images/${product.image}`}
-          alt="Card Cover"
-          className="cart-product-image"
-        />
-        <div className="mt-2 color-extra">{product.name}</div>
-      </td>
-      <td className="text-center">
-        <div className="d-flex flex-column justify-content-center h-100">
-          <span className="p-2 color-extra">{product.attributes}</span>
-        </div>
-      </td>
-      <td className="text-center">
-        <div className="d-flex flex-column justify-content-center align-items-center h-100">
-          <FormGroup className="mt-4">
-            <Input
-              type="number"
-              name="p-quantity"
-              className="p-quantity"
-              value={product.quantity}
-              readOnly
-            />
-          </FormGroup>
-        </div>
-      </td>
-      <td className="text-center">
-        <div className="d-flex flex-column justify-content-center align-items-center h-100">
-          <span className="color-extra"> {product.subtotal}</span>
-        </div>
-      </td>
-      <td className="text-center">
-        <div className="d-flex flex-column justify-content-center align-items-center h-100">
-          <i className="fas fa-times" />
-        </div>
-      </td>
-    </tr>
-  );
-};
+class CartItem extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      quantity: '',
+      showUpdateButton: false
+    };
+  }
+  render() {
+    const { product, updateCartItem, invalidateCheckout } = this.props;
+    return (
+      <tr className="cart-item-row">
+        <td className="text-center">
+          <img
+            src={`${process.env.PUBLIC_URL}/images/${product.image}`}
+            alt="Card Cover"
+            className="cart-product-image"
+          />
+          <div className="mt-2 color-extra">{product.name}</div>
+        </td>
+        <td className="text-center">
+          <div className="d-flex flex-column justify-content-center h-100">
+            <span className="p-2 color-extra">{product.attributes}</span>
+          </div>
+        </td>
+        <td className="text-center">
+          <div className="d-flex flex-column justify-content-center align-items-center h-100">
+            <FormGroup className="mt-4">
+              <Input
+                type="number"
+                name="p-quantity"
+                min={1}
+                className="p-quantity"
+                value={this.state.quantity || product.quantity}
+                onChange={e => {
+                  const { value } = e.target;
+                  this.setState({
+                    quantity: value.replace(/[^0-9]/g, ''),
+                    showUpdateButton: true
+                  });
+                  invalidateCheckout();
+                }}
+              />
+            </FormGroup>
+          </div>
+        </td>
+        <td className="text-center">
+          <div className="d-flex flex-column justify-content-center align-items-center h-100">
+            <span className="color-extra">
+              {' '}
+              {this.state.quantity
+                ? (this.state.quantity * product.price).toFixed(2)
+                : product.subtotal}
+            </span>
+          </div>
+        </td>
+        <td className="text-center">
+          <div className="d-flex flex-column justify-content-center align-items-center h-100">
+            <span>
+              {this.state.showUpdateButton && (
+                <i
+                  className="fas fa-check mr-2"
+                  onClick={() => {
+                    updateCartItem({
+                      itemId: product.item_id,
+                      quantity: this.state.quantity
+                    });
+                  }}
+                />
+              )}
+              <i className="fas fa-times ml-2" />
+            </span>
+          </div>
+        </td>
+      </tr>
+    );
+  }
+}
+
+export default CartItem;

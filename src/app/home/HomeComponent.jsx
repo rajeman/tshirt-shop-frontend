@@ -26,9 +26,11 @@ class HomeComponent extends React.Component {
       page: defaultPage,
       filter: constants.FILTER_NONE,
       word: '',
-      modal: false
+      modal: false,
+      checkoutButton: true
     };
     this.toggle = this.toggle.bind(this);
+    this.updateCheckoutState = this.updateCheckoutState.bind(this);
   }
 
   componentDidMount() {
@@ -80,16 +82,24 @@ class HomeComponent extends React.Component {
     }));
   }
 
+  updateCheckoutState(state) {
+    this.setState({
+      checkoutButton: state
+    });
+  }
+
   render() {
     const {
-      productsState: { status, products }
+      productsState: { status, products },
+      cartState
     } = this.props;
-    const { filter, page, limit } = this.state;
+    const { filter, page, limit, checkoutButton } = this.state;
     const productsAvailable =
       status === constants.PRODUCTS_FETCH_SUCCESS &&
       products[filter] &&
       products[filter][page];
     const productsLoading = status === constants.PRODUCTS_FETCHING;
+    const cartAvailable = cartState.status === 'CART_FETCH_SUCCESS';
     return (
       <div>
         <br />
@@ -128,6 +138,9 @@ class HomeComponent extends React.Component {
                   onClick={e => {
                     e.preventDefault();
                     this.toggle();
+                    this.setState({
+                      checkoutButton: true
+                    });
                   }}
                 >
                   <span className="color-extra bt-checkout-text">Cart</span>
@@ -174,18 +187,26 @@ class HomeComponent extends React.Component {
         >
           <ModalHeader toggle={this.toggle}>Cart Items</ModalHeader>
           <ModalBody>
-            <CartContainer />
+            <CartContainer updateCheckoutState={this.updateCheckoutState} />
           </ModalBody>
           <ModalFooter>
-            <Button
-              type="submit"
-              className="h-100 btn-secondary-active b-checkout float-right mr-1"
-              onClick={e => {
-                e.preventDefault();
-              }}
-            >
-              <span className="color-extra bt-checkout-text">Checkout</span>
-            </Button>
+            {cartAvailable && checkoutButton && (
+              <Button
+                type="submit"
+                className="h-100 btn-secondary-active b-checkout float-right mr-1"
+                onClick={e => {
+                  e.preventDefault();
+                }}
+              >
+                <span className="color-extra bt-checkout-text">Checkout</span>
+              </Button>
+            )}
+            {cartAvailable && !checkoutButton && (
+              <span className="text-danger checkout-warning font-weight-light">
+                {' '}
+                You have unsaved changes
+              </span>
+            )}
           </ModalFooter>
         </Modal>
       </div>

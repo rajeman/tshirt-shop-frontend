@@ -9,7 +9,6 @@ const productReducer = (state = defaultState, action) => {
     case constants.SET_PRODUCT_STATE: {
       const { status, product } = action;
       const oldProducts = state.product;
-      console.log(oldProducts, 'old products');
       return {
         ...state,
         status,

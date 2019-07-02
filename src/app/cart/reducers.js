@@ -14,6 +14,21 @@ const cartReducer = (state = defaultState, action) => {
         ...cartItems
       };
     }
+    case constants.SET_CART_ADD_STATE: {
+      const { status } = action;
+      return {
+        ...state,
+        status
+      };
+    }
+
+    case constants.SET_CART_UPDATE_STATE: {
+      const { status } = action;
+      return {
+        ...state,
+        status
+      };
+    }
     default:
       return state;
   }

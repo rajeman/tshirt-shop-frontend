@@ -17,13 +17,19 @@ table {
 }
 
 .fa-times {
-  font-size: 30px;
+  font-size: 16px;
   color: #e66767;
 }
 
-.fa-times:hover {
+.fa-check {
+  color: rgb(19, 221, 63);
+}
+
+.fa-times:hover,
+.fa-check:hover {
   cursor: pointer;
 }
+
 
 .cart-product-name {
   font-size: 0.8rem;
@@ -31,6 +37,10 @@ table {
 
 .cart-item-row:hover {}
 
+
+.checkout-warning {
+  font-size: 12px;
+}
 
 .table>tbody>tr>th,
 .table>tfoot>tr>td,

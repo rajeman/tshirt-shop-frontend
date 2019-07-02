@@ -4,6 +4,8 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorker from './serviceWorker';
@@ -17,6 +19,7 @@ const store = createStore(
 
 ReactDOM.render(
   <Provider store={store}>
+    <ToastContainer autoClose={1500} hideProgressBar={true} />
     <AppRouter />
   </Provider>,
   document.getElementById('root')

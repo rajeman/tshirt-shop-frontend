@@ -11,6 +11,7 @@ class ProductComponent extends React.Component {
     this.state = {
       productImage: ''
     };
+    this.addToCart = this.addToCart.bind(this);
   }
 
   componentDidMount() {
@@ -26,17 +27,29 @@ class ProductComponent extends React.Component {
     }
   }
 
+  addToCart(attributes) {
+    const {
+      match: {
+        params: { productId }
+      },
+      addToCart
+    } = this.props;
+    addToCart({ attributes, productId });
+  }
+
   render() {
     const {
       productState: { product, status },
       match: {
         params: { productId }
-      }
+      },
+      cartState
     } = this.props;
     const { productImage } = this.state;
     const productAvailable =
       status === constants.PRODUCT_FETCH_SUCCESS && product[productId];
     const productLoading = status === constants.PRODUCT_FETCHING;
+    const cartAdding = cartState.status === 'CART_ADDING';
     return (
       <div>
         <div className="product-content m-0">
@@ -114,7 +127,10 @@ class ProductComponent extends React.Component {
                   {product[productId].description}
                 </div>
                 <br />
-                <ProductAttributes />
+                <ProductAttributes
+                  addToCart={this.addToCart}
+                  cartAdding={cartAdding}
+                />
               </Col>
             </Row>
           )}
