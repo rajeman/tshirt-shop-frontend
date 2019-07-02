@@ -14,6 +14,11 @@ export default class NavbarComponent extends React.Component {
             </span>
           </NavbarBrand>
           <Nav>
+            <NavItem>
+              <NavLink href="/cart" className="d-inline-block pl-1">
+                <i className="fas fa-cart-plus" />
+              </NavLink>
+            </NavItem>
             <NavItem className="color-primary">
               <NavLink href="#" className="d-inline-block pr-1">
                 <span className="color-primary small">Sign In</span>

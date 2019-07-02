@@ -1,17 +1,8 @@
 import React from 'react';
-import {
-  Row,
-  Col,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button
-} from 'reactstrap';
+import { Row, Col, Button } from 'reactstrap';
 import './home.css';
 import PaginationComponent from '../pagination/PaginationComponent';
 import { ItemCard, FilterCard } from '../cards';
-import CartContainer from '../cart/CartContainer';
 import { Spinner } from '../loaders';
 import constants from './constants';
 
@@ -90,16 +81,14 @@ class HomeComponent extends React.Component {
 
   render() {
     const {
-      productsState: { status, products },
-      cartState
+      productsState: { status, products }
     } = this.props;
-    const { filter, page, limit, checkoutButton } = this.state;
+    const { filter, page, limit } = this.state;
     const productsAvailable =
       status === constants.PRODUCTS_FETCH_SUCCESS &&
       products[filter] &&
       products[filter][page];
     const productsLoading = status === constants.PRODUCTS_FETCHING;
-    const cartAvailable = cartState.status === 'CART_FETCH_SUCCESS';
     return (
       <div>
         <br />
@@ -180,35 +169,6 @@ class HomeComponent extends React.Component {
           </Row>
           <br />
         </div>
-        <Modal
-          isOpen={this.state.modal}
-          toggle={this.toggle}
-          className={this.props.className}
-        >
-          <ModalHeader toggle={this.toggle}>Cart Items</ModalHeader>
-          <ModalBody>
-            <CartContainer updateCheckoutState={this.updateCheckoutState} />
-          </ModalBody>
-          <ModalFooter>
-            {cartAvailable && checkoutButton && (
-              <Button
-                type="submit"
-                className="h-100 btn-secondary-active b-checkout float-right mr-1"
-                onClick={e => {
-                  e.preventDefault();
-                }}
-              >
-                <span className="color-extra bt-checkout-text">Checkout</span>
-              </Button>
-            )}
-            {cartAvailable && !checkoutButton && (
-              <span className="text-danger checkout-warning font-weight-light">
-                {' '}
-                You have unsaved changes
-              </span>
-            )}
-          </ModalFooter>
-        </Modal>
       </div>
     );
   }

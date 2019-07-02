@@ -10,7 +10,7 @@ class CartItem extends React.Component {
     };
   }
   render() {
-    const { product, updateCartItem, invalidateCheckout } = this.props;
+    const { product, updateCartItem } = this.props;
     return (
       <tr className="cart-item-row">
         <td className="text-center">
@@ -37,11 +37,17 @@ class CartItem extends React.Component {
                 value={this.state.quantity || product.quantity}
                 onChange={e => {
                   const { value } = e.target;
-                  this.setState({
-                    quantity: value.replace(/[^0-9]/g, ''),
-                    showUpdateButton: true
-                  });
-                  invalidateCheckout();
+                  this.setState(
+                    {
+                      quantity: value.replace(/[^0-9]/g, '')
+                    },
+                    () => {
+                      updateCartItem({
+                        itemId: product.item_id,
+                        quantity: this.state.quantity || 1
+                      });
+                    }
+                  );
                 }}
               />
             </FormGroup>
@@ -60,18 +66,7 @@ class CartItem extends React.Component {
         <td className="text-center">
           <div className="d-flex flex-column justify-content-center align-items-center h-100">
             <span>
-              {this.state.showUpdateButton && (
-                <i
-                  className="fas fa-check mr-2"
-                  onClick={() => {
-                    updateCartItem({
-                      itemId: product.item_id,
-                      quantity: this.state.quantity
-                    });
-                  }}
-                />
-              )}
-              <i className="fas fa-times ml-2" />
+              <i className="fas fa-trash" />
             </span>
           </div>
         </td>

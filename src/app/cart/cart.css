@@ -16,17 +16,7 @@ table {
   height: 1px;
 }
 
-.fa-times {
-  font-size: 16px;
-  color: #e66767;
-}
-
-.fa-check {
-  color: rgb(19, 221, 63);
-}
-
-.fa-times:hover,
-.fa-check:hover {
+.fa-trash:hover {
   cursor: pointer;
 }
 
@@ -34,8 +24,6 @@ table {
 .cart-product-name {
   font-size: 0.8rem;
 }
-
-.cart-item-row:hover {}
 
 
 .checkout-warning {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table } from 'reactstrap';
+import { Table, Button } from 'reactstrap';
 import CartItem from './CartItem';
 import constants from './constants';
 import { Spinner } from '../loaders';
@@ -12,8 +12,6 @@ class CartComponent extends React.Component {
       totalPrice: ''
     };
     this.updateCartItem = this.updateCartItem.bind(this);
-    this.invalidateCheckout = this.invalidateCheckout.bind(this);
-    this.props.updateCheckoutState(true);
   }
 
   componentDidMount() {
@@ -29,13 +27,6 @@ class CartComponent extends React.Component {
     updateCart(item);
   }
 
-  invalidateCheckout() {
-    this.setState({
-      totalPrice: ' '
-    });
-    this.props.updateCheckoutState(false);
-  }
-
   render() {
     const {
       cartState: { cart, status }
@@ -44,7 +35,7 @@ class CartComponent extends React.Component {
     const cartFetching =
       status === constants.CART_FETCHING || status === constants.CART_UPDATING;
     return (
-      <div>
+      <div class="container">
         {cartFetching && (
           <div className="d-flex justify-content-center">
             <Spinner />
@@ -75,20 +66,58 @@ class CartComponent extends React.Component {
                 );
               })}
             </tbody>
+            <tfoot>
+              <tr>
+                <td />
+                <td />
+                <td />
+                <td />
+                <td>
+                  {cartItemsAvailable && (
+                    <div className="cart-total text-muted">
+                      <span>Total Price:</span>{' '}
+                      <span className="color-primary mr-2">
+                        $
+                        {cart
+                          .reduce(
+                            (total, product) =>
+                              total + Number(product.subtotal),
+                            0
+                          )
+                          .toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <td />
+                <td />
+                <td />
+                <td />
+                <td>
+                  <div
+                    colSpan={3}
+                    className="d-flex justify-content-end flex-column"
+                  >
+                    {cartItemsAvailable && (
+                      <Button
+                        type="submit"
+                        className="h-100 btn-secondary-active b-checkout mr-1"
+                        onClick={e => {
+                          e.preventDefault();
+                        }}
+                      >
+                        <span className="color-extra bt-checkout-text">
+                          Checkout
+                        </span>
+                      </Button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            </tfoot>
           </Table>
-        )}
-        {cartItemsAvailable && (
-          <div className="cart-total float-right text-muted">
-            <span>Total Price:</span>{' '}
-            <span className="color-primary">
-              $
-              {this.state.totalPrice ||
-                cart.reduce(
-                  (total, product) => total + Number(product.subtotal),
-                  0
-                )}
-            </span>
-          </div>
         )}
       </div>
     );

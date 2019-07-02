@@ -8,6 +8,7 @@ const cartUrl = `${process.env.REACT_APP_API_URL}/shoppingCart`;
 
 const CancelToken = axios.CancelToken;
 let cancel;
+let cancelUpdate;
 
 const cartFetchState = (status, cartItems) => ({
   type: constants.SET_CART_FETCH_STATE,
@@ -20,9 +21,10 @@ const cartAddState = status => ({
   status
 });
 
-const cartUpdateState = status => ({
-  type: constants.SET_CART_UPDATE_STATE,
-  status
+const cartItemState = (status, cartItem) => ({
+  type: constants.SET_CART_ITEM_STATE,
+  status,
+  cartItem
 });
 
 const fetchCart = cartId => async dispatch => {
@@ -40,7 +42,9 @@ const fetchCart = cartId => async dispatch => {
     });
     dispatch(
       cartFetchState(constants.CART_FETCH_SUCCESS, {
-        cart: response.data,
+        cart: response.data.sort((a, b) => {
+          return parseInt(a.item_id - parseInt(b.item_id));
+        }),
         cartId
       })
     );
@@ -79,26 +83,25 @@ const addToCart = product => async dispatch => {
 };
 
 const updateCart = item => async dispatch => {
-  dispatch(cartUpdateState(constants.CART_UPDATING));
+  cancelUpdate && cancelUpdate();
   try {
-    await axios.put(`${cartUrl}/update/${item.itemId}`, {
-      quantity: parseInt(item.quantity)
-    });
-    dispatch(cartUpdateState(constants.CART_UPDATE_SUCCESS));
-    toast.success('Product updated', {
-      position: toast.POSITION.TOP_RIGHT
-    });
+    const response = await axios.put(
+      `${cartUrl}/update/${item.itemId}`,
+      {
+        quantity: parseInt(item.quantity)
+      },
+      {
+        cancelToken: new CancelToken(function executor(c) {
+          cancelUpdate = c;
+        })
+      }
+    );
+    const updatedItem = response.data.filter(
+      newItem => newItem.item_id === item.itemId
+    );
+    dispatch(cartItemState(constants.CART_FETCH_SUCCESS, updatedItem[0]));
   } catch (error) {
-    const errorMessage =
-      error.response && error.response.data
-        ? error.response.data.message
-        : 'An error occurred';
-    dispatch(cartUpdateState(constants.CART_UPDATE_ERROR));
-    toast.error(errorMessage, {
-      position: toast.POSITION.TOP_RIGHT
-    });
-  } finally {
-    dispatch(fetchCart(localStorage.getItem(constants.CART_ID)));
+    console.log(error);
   }
 };
 
