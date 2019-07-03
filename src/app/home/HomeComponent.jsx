@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Button } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import './home.css';
 import PaginationComponent from '../pagination/PaginationComponent';
 import { ItemCard, FilterCard } from '../cards';

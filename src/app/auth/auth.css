@@ -1,0 +1,20 @@
+.fa-facebook {
+  color: rgb(54, 145, 219);
+  font-size: 2rem;
+}
+
+.fa-facebook:hover {
+  cursor: pointer;
+}
+
+.extra-login-text {
+  font-size: 0.8rem;
+}
+
+.modal-dialog {
+  top: 20vh;
+}
+
+.fa-times:hover {
+  cursor: pointer;
+}

@@ -12,7 +12,8 @@ class CartComponent extends React.Component {
     this.state = {
       totalPrice: '',
       deleteModal: false,
-      itemId: 0
+      itemId: 0,
+      emptyCart: false
     };
     this.updateCartItem = this.updateCartItem.bind(this);
     this.confirmItemDeletion = this.confirmItemDeletion.bind(this);
@@ -23,6 +24,21 @@ class CartComponent extends React.Component {
     const cartId = localStorage.getItem(constants.CART_ID);
     if (cartId) {
       fetchCart(cartId);
+    } else {
+      this.setState({
+        emptyCart: true
+      });
+    }
+  }
+
+  componentDidUpdate() {
+    const {
+      cartState: { cart }
+    } = this.props;
+    if (cart && cart.length > 0 && this.state.emptyCart) {
+      this.setState({
+        emptyCart: false
+      });
     }
   }
 
@@ -50,7 +66,8 @@ class CartComponent extends React.Component {
     const cartItemsAvailable = status === constants.CART_FETCH_SUCCESS;
     const cartFetching =
       status === constants.CART_FETCHING || status === constants.CART_UPDATING;
-    const emptyCart = cartItemsAvailable && cart.length === 0;
+    const emptyCart =
+      (cartItemsAvailable && cart.length === 0) || this.state.emptyCart;
     return (
       <div className="container">
         {cartFetching && (
