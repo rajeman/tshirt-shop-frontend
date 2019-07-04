@@ -7,11 +7,12 @@ const defaultState = {
 const authReducer = (state = defaultState, action) => {
   switch (action.type) {
     case constants.SET_AUTH_STATE: {
-      const { status, user } = action;
+      const { status, user, error } = action;
       return {
         ...state,
         status,
-        user
+        user,
+        error
       };
     }
     default:

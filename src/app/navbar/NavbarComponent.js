@@ -89,9 +89,7 @@ export default class NavbarComponent extends React.Component {
                     localStorage.removeItem(constants.BEARER_TOKEN);
 
                     if (window.FB) {
-                      window.FB.logout(response => {
-                        console.log('logged out');
-                      });
+                      window.FB.logout(response => {});
                     }
                     this.props.dispatch(authState('', {}));
                   }}

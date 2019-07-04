@@ -13,18 +13,24 @@ import {
   NavItem,
   NavLink,
   TabContent,
-  TabPane
+  TabPane,
+  FormFeedback
 } from 'reactstrap';
 import Spinner from '../loaders/spinner';
 import constants from './constants';
 import classnames from 'classnames';
 import './auth.css';
 
-class FacebookLoginComponent extends React.Component {
+class AuthComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeTab: '1'
+      activeTab: '1',
+      loginEmail: '',
+      loginPassword: '',
+      signupName: '',
+      signupEmail: '',
+      signupPassword: ''
     };
     this.toggle = this.toggle.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -35,7 +41,7 @@ class FacebookLoginComponent extends React.Component {
   componentDidMount() {
     window.fbAsyncInit = function() {
       FB.init({
-        appId: 446270662825214,
+        appId: process.env.REACT_APP_FACEBOOK_ID,
         cookie: true,
         xfbml: true,
         version: 'v3.3'
@@ -47,7 +53,6 @@ class FacebookLoginComponent extends React.Component {
           if (response.authResponse) {
             const { loginWithFacebook } = this.props;
             loginWithFacebook(response.authResponse.accessToken);
-            this.props.removeModal();
           } else {
             // console.log(
             //   '---->User cancelled login or did not fully authorize.'
@@ -66,6 +71,13 @@ class FacebookLoginComponent extends React.Component {
 
       fjs.parentNode.insertBefore(js, fjs);
     })(document, 'script', 'facebook-jssdk');
+  }
+
+  componentDidUpdate() {
+    const {
+      authState: { status }
+    } = this.props;
+    status === constants.AUTH_SUCCESS && this.props.removeModal();
   }
 
   statusChangeCallback(response) {
@@ -88,7 +100,7 @@ class FacebookLoginComponent extends React.Component {
   }
 
   handleClick() {
-    window.FB.login(this.checkLoginState());
+    window.FB.login(this.checkLoginState(), { scope: 'public_profile,email' });
   }
 
   toggle(tab) {
@@ -101,7 +113,9 @@ class FacebookLoginComponent extends React.Component {
 
   render() {
     const {
-      authState: { status }
+      authState: { status, error },
+      loginWithPassword,
+      signUp
     } = this.props;
     return (
       <Modal isOpen={true}>
@@ -134,36 +148,56 @@ class FacebookLoginComponent extends React.Component {
           </Nav>
           <TabContent activeTab={this.state.activeTab}>
             <TabPane tabId="1">
-              <Form>
+              <Form
+                onSubmit={e => {
+                  e.preventDefault();
+                  loginWithPassword(
+                    this.state.loginEmail,
+                    this.state.loginPassword
+                  );
+                }}
+              >
                 <FormGroup>
                   <Label for="email" />
                   <Input
+                    invalid={status === constants.LOGIN_ERROR}
                     type="email"
+                    value={this.state.loginEmail}
+                    onChange={e => {
+                      const { value } = e.target;
+                      this.setState({
+                        loginEmail: value
+                      });
+                    }}
                     placeholder="Enter your email"
                     required
                     title="email is required"
                   />
+                  <FormFeedback>{}</FormFeedback>
                 </FormGroup>
                 <FormGroup>
                   <Input
+                    invalid={status === constants.LOGIN_ERROR}
                     type="password"
+                    value={this.state.loginPassword}
+                    onChange={e => {
+                      const { value } = e.target;
+                      this.setState({
+                        loginPassword: value
+                      });
+                    }}
                     placeholder="Enter your password"
                     required
-                    pattern=".{3,16}"
-                    title="password must be within 3 and 16 characters"
+                    pattern=".{3,20}"
+                    title="password too short"
                   />
+                  <FormFeedback>Invalid email or password</FormFeedback>
                 </FormGroup>
                 <div>
                   {status === constants.AUTHENTICATING ? (
                     <Spinner />
                   ) : (
-                    <Button
-                      type="submit"
-                      className="btn-secondary-active"
-                      onClick={e => {
-                        // e.preventDefault();
-                      }}
-                    >
+                    <Button type="submit" className="btn-secondary-active">
                       Submit
                     </Button>
                   )}
@@ -171,45 +205,86 @@ class FacebookLoginComponent extends React.Component {
               </Form>
             </TabPane>
             <TabPane tabId="2">
-              <Form>
+              <Form
+                onSubmit={e => {
+                  e.preventDefault();
+                  signUp(
+                    this.state.signupName,
+                    this.state.signupEmail,
+                    this.state.signupPassword
+                  );
+                }}
+              >
                 <FormGroup>
                   <Label for="name" />
                   <Input
+                    invalid={
+                      status === constants.SIGNUP_ERROR && error && error.name
+                        ? true
+                        : false
+                    }
                     type="text"
                     placeholder="Enter your full name"
+                    onChange={e => {
+                      const { value } = e.target;
+                      this.setState({
+                        signupName: value
+                      });
+                    }}
                     required
                     pattern=".{3,25}"
                     title="name must be within 3 and 25 characters"
                   />
+                  <FormFeedback>{error && error.message}</FormFeedback>
                 </FormGroup>
                 <FormGroup>
                   <Input
+                    invalid={
+                      status === constants.SIGNUP_ERROR && error && error.email
+                        ? true
+                        : false
+                    }
                     type="email"
                     placeholder="Enter your email"
+                    onChange={e => {
+                      const { value } = e.target;
+                      this.setState({
+                        signupEmail: value
+                      });
+                    }}
                     required
                     title="email is required"
                   />
+                  <FormFeedback>{error && error.message}</FormFeedback>
                 </FormGroup>
                 <FormGroup>
                   <Input
+                    invalid={
+                      status === constants.SIGNUP_ERROR &&
+                      error &&
+                      error.password
+                        ? true
+                        : false
+                    }
                     type="password"
                     placeholder="Enter your password"
+                    onChange={e => {
+                      const { value } = e.target;
+                      this.setState({
+                        signupPassword: value
+                      });
+                    }}
                     required
-                    pattern=".{3,16}"
-                    title="password must be within 3 and 16 characters"
+                    pattern=".{6,20}"
+                    title="password must be 6 and 20 characters"
                   />
+                  <FormFeedback>{error && error.messaging}</FormFeedback>
                 </FormGroup>
                 <div>
                   {status === constants.AUTHENTICATING ? (
                     <Spinner />
                   ) : (
-                    <Button
-                      type="submit"
-                      className="btn-secondary-active"
-                      onClick={e => {
-                        // e.preventDefault();
-                      }}
-                    >
+                    <Button type="submit" className="btn-secondary-active">
                       Submit
                     </Button>
                   )}
@@ -236,4 +311,4 @@ class FacebookLoginComponent extends React.Component {
   }
 }
 
-export default FacebookLoginComponent;
+export default AuthComponent;

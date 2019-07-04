@@ -1,22 +1,25 @@
 import { connect } from 'react-redux';
 import actions from './actions';
-import FacebookLoginComponent from './FacebookLoginComponent';
+import AuthComponent from './AuthComponent';
 
-const { loginWithFacebook } = actions;
+const { loginWithFacebook, loginWithPassword, signUp } = actions;
 
-const mapStateToProps = ({ auth: { status, user } }) => {
-  return { authState: { status, user } };
+const mapStateToProps = ({ auth: { status, user, error } }) => {
+  return { authState: { status, user, error } };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    loginWithFacebook: accessToken => dispatch(loginWithFacebook(accessToken))
+    loginWithFacebook: accessToken => dispatch(loginWithFacebook(accessToken)),
+    loginWithPassword: (email, password) =>
+      dispatch(loginWithPassword(email, password)),
+    signUp: (name, email, password) => dispatch(signUp(name, email, password))
   };
 };
 
 const AuthContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(FacebookLoginComponent);
+)(AuthComponent);
 
 export default AuthContainer;
