@@ -41,3 +41,11 @@ code {
 .product-content {
   padding: 2%;
 }
+
+.pay-button-active {
+  color: rgb(7, 247, 7)
+}
+
+.pay-button-active:hover {
+  cursor: pointer
+}

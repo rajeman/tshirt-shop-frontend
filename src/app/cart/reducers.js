@@ -55,6 +55,15 @@ const cartReducer = (state = defaultState, action) => {
         })
       };
     }
+
+    case constants.CREATE_SALE_ORDER_STATE: {
+      const { createOrderStatus, orderId } = action;
+      return {
+        ...state,
+        createOrderStatus,
+        ...orderId
+      };
+    }
     default:
       return state;
   }

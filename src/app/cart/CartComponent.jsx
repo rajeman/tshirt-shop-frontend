@@ -1,9 +1,11 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { Table, Button, Card, CardBody, CardText, CardImg } from 'reactstrap';
 import CartItem from './CartItem';
 import constants from './constants';
 import { Spinner } from '../loaders';
 import DeleteModal from '../modal/ModalComponent';
+import PaymentComponent from '../order/PaymentComponent';
 import './cart.css';
 
 class CartComponent extends React.Component {
@@ -13,10 +15,12 @@ class CartComponent extends React.Component {
       totalPrice: '',
       deleteModal: false,
       itemId: 0,
-      emptyCart: false
+      emptyCart: false,
+      paymentVisible: false
     };
     this.updateCartItem = this.updateCartItem.bind(this);
     this.confirmItemDeletion = this.confirmItemDeletion.bind(this);
+    this.modalCloseHandler = this.modalCloseHandler.bind(this);
   }
 
   componentDidMount() {
@@ -59,9 +63,19 @@ class CartComponent extends React.Component {
     deleteCartItem(this.state.itemId);
   }
 
+  modalCloseHandler() {
+    this.setState({
+      paymentVisible: false
+    });
+    this.props.history.push('/orders');
+  }
+
   render() {
     const {
-      cartState: { cart, status }
+      cartState: { cart, status, createOrderStatus, orderId },
+      singleOrderState: { singleOrderStatus, singleOrder },
+      fetchSingleOrder,
+      createOrder
     } = this.props;
     const cartItemsAvailable = status === constants.CART_FETCH_SUCCESS;
     const cartFetching =
@@ -70,11 +84,12 @@ class CartComponent extends React.Component {
       (cartItemsAvailable && cart.length === 0) || this.state.emptyCart;
     return (
       <div className="container">
-        {cartFetching && (
-          <div className="d-flex justify-content-center">
-            <Spinner />
-          </div>
-        )}
+        {cartFetching ||
+          (createOrderStatus === constants.CREATING_ORDER && (
+            <div className="d-flex justify-content-center">
+              <Spinner />
+            </div>
+          ))}
         {emptyCart && (
           <div className="d-flex justify-content-center">
             <Card className="border-0">
@@ -154,24 +169,37 @@ class CartComponent extends React.Component {
                       colSpan={3}
                       className="d-flex justify-content-end flex-column"
                     >
-                      {cartItemsAvailable && (
-                        <Button
-                          type="submit"
-                          className="h-100 btn-secondary-active b-checkout mr-1"
-                          onClick={e => {
-                            e.preventDefault();
-                          }}
-                        >
-                          <span className="color-extra bt-checkout-text">
-                            Checkout
-                          </span>
-                        </Button>
-                      )}
+                      {cartItemsAvailable &&
+                        createOrderStatus !== constants.CREATING_ORDER && (
+                          <Button
+                            type="submit"
+                            className="h-100 btn-secondary-active b-checkout mr-1"
+                            onClick={e => {
+                              e.preventDefault();
+                              this.setState({ paymentVisible: true });
+                              createOrder();
+                            }}
+                          >
+                            <span className="color-extra bt-checkout-text">
+                              Checkout
+                            </span>
+                          </Button>
+                        )}
                     </div>
                   </td>
                 </tr>
               </tfoot>
             </Table>
+            {this.state.paymentVisible &&
+              createOrderStatus === constants.CREATE_ORDER_SUCCESS && (
+                <PaymentComponent
+                  fetchSingleOrder={fetchSingleOrder}
+                  singleOrderStatus={singleOrderStatus}
+                  singleOrder={singleOrder}
+                  orderId={orderId}
+                  closeHandler={this.modalCloseHandler}
+                />
+              )}
             {this.state.deleteModal && (
               <DeleteModal
                 payload={{
@@ -202,4 +230,4 @@ class CartComponent extends React.Component {
   }
 }
 
-export default CartComponent;
+export default withRouter(CartComponent);

@@ -3,6 +3,7 @@ export { default as Product } from './product/ProductContainer';
 export { default as NavbarContainer } from './navbar/NavbarContainer';
 export { default as CartContainer } from './cart/CartContainer';
 export { default as AuthContainer } from './auth/AuthContainer';
+export { default as OrderContainer } from './order/OrderContainer';
 export {
   default as ErrorBoundaryComponent
 } from './error/ErrorBoundaryComponent';

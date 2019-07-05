@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import constants from './constants';
 
 const cartUrl = `${process.env.REACT_APP_API_URL}/shoppingCart`;
+const ordersUrl = `${process.env.REACT_APP_API_URL}/orders`;
 
 const CancelToken = axios.CancelToken;
 let cancel;
@@ -31,6 +32,12 @@ const cartDeleteState = (status, itemId) => ({
   type: constants.SET_CART_DELETE_STATE,
   status,
   itemId
+});
+
+const createOrderState = (status, orderId) => ({
+  type: constants.CREATE_SALE_ORDER_STATE,
+  createOrderStatus: status,
+  orderId
 });
 
 const fetchCart = cartId => async dispatch => {
@@ -121,10 +128,46 @@ const deleteCartItem = itemId => async dispatch => {
   }
 };
 
+const createOrder = () => async dispatch => {
+  dispatch(createOrderState(constants.CREATING_ORDER, { orderId: undefined }));
+  const cartId = localStorage.getItem(constants.CART_ID);
+  try {
+    const response = await axios.post(
+      `${ordersUrl}`,
+      {
+        cart_id: cartId,
+        shipping_id: 1,
+        tax_id: 1
+      },
+      {
+        headers: {
+          'USER-KEY': `Bearer ${localStorage.getItem('BEARER_TOKEN')}`
+        }
+      }
+    );
+    dispatch(
+      createOrderState(constants.CREATE_ORDER_SUCCESS, {
+        orderId: response.data.orderId
+      })
+    );
+    localStorage.removeItem(constants.CART_ID);
+  } catch (error) {
+    dispatch(
+      createOrderState(constants.CREATE_ORDER_ERROR, {
+        orderId: undefined
+      })
+    );
+    toast.error('Error creating order', {
+      position: toast.POSITION.TOP_RIGHT
+    });
+  }
+};
+
 export default {
   cartFetchState,
   fetchCart,
   addToCart,
   updateCart,
-  deleteCartItem
+  deleteCartItem,
+  createOrder
 };

@@ -6,6 +6,7 @@ import {
   Product,
   CartContainer,
   AuthContainer,
+  OrderContainer,
   ErrorBoundaryComponent
 } from '../app';
 
@@ -17,6 +18,7 @@ const App = () => (
         <Switch>
           <Route path="/" component={Home} exact />
           <Route path="/cart" component={CartContainer} exact />
+          <Route path="/orders" component={OrderContainer} exact />
           <Route path="/auth/facebook" component={AuthContainer} exact />
           <Route path="/products/:productId" component={Product} exact />
         </Switch>
