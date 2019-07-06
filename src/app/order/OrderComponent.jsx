@@ -21,6 +21,21 @@ class OrderComponent extends React.Component {
     fetchOrders();
   }
 
+  componentDidUpdate() {
+    const {
+      order: { paymentStatus },
+      paymentState
+    } = this.props;
+    if (paymentStatus === constants.PAYMENT_PROCESS_SUCCESS) {
+      setTimeout(() => {
+        paymentState('');
+        this.setState({
+          showPayment: false
+        });
+      }, 5000);
+    }
+  }
+
   showPaymentComponent(orderId) {
     this.setState({
       showPayment: true,
@@ -29,15 +44,25 @@ class OrderComponent extends React.Component {
   }
 
   modalCloseHandler() {
-    this.setState({
-      showPayment: false
-    });
+    const {
+      order: { singleOrderStatus, paymentStatus }
+    } = this.props;
+    if (
+      singleOrderStatus !== constants.SINGLE_ORDER_FETCHING &&
+      paymentStatus !== constants.PAYMENT_PROCESSING
+    ) {
+      this.setState({
+        showPayment: false
+      });
+    }
   }
 
   render() {
     const {
-      order: { status, order, singleOrderStatus, singleOrder },
-      fetchSingleOrder
+      order: { status, order, singleOrderStatus, singleOrder, paymentStatus },
+      fetchSingleOrder,
+      makePayment,
+      paymentState
     } = this.props;
     return (
       <div className="container">
@@ -79,6 +104,9 @@ class OrderComponent extends React.Component {
             singleOrderStatus={singleOrderStatus}
             singleOrder={singleOrder}
             orderId={this.state.orderId}
+            makePayment={makePayment}
+            paymentStatus={paymentStatus}
+            paymentState={paymentState}
             closeHandler={this.modalCloseHandler}
           />
         )}

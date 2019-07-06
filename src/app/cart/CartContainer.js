@@ -4,11 +4,11 @@ import singleOrderActions from '../order/actions';
 import CartComponent from './CartComponent';
 
 const { fetchCart, updateCart, deleteCartItem, createOrder } = actions;
-const { fetchSingleOrder } = singleOrderActions;
+const { fetchSingleOrder, makePayment, paymentState } = singleOrderActions;
 
 const mapStateToProps = ({
   cart: { status, cart, createOrderStatus, orderId },
-  order: { singleOrderStatus, singleOrder }
+  order: { singleOrderStatus, singleOrder, paymentStatus }
 }) => {
   return {
     cartState: {
@@ -17,7 +17,7 @@ const mapStateToProps = ({
       createOrderStatus,
       orderId
     },
-    singleOrderState: { singleOrderStatus, singleOrder }
+    singleOrderState: { singleOrderStatus, singleOrder, paymentStatus }
   };
 };
 
@@ -27,7 +27,10 @@ const mapDispatchToProps = dispatch => {
     updateCart: item => dispatch(updateCart(item)),
     deleteCartItem: itemId => dispatch(deleteCartItem(itemId)),
     fetchSingleOrder: orderId => dispatch(fetchSingleOrder(orderId)),
-    createOrder: () => dispatch(createOrder())
+    createOrder: () => dispatch(createOrder()),
+    makePayment: (stripeToken, orderId, amount) =>
+      dispatch(makePayment(stripeToken, orderId, amount)),
+    paymentState: status => dispatch(paymentState(status))
   };
 };
 

@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { Table, Button, Card, CardBody, CardText, CardImg } from 'reactstrap';
 import CartItem from './CartItem';
 import constants from './constants';
+import orderConstants from '../order/constants';
 import { Spinner } from '../loaders';
 import DeleteModal from '../modal/ModalComponent';
 import PaymentComponent from '../order/PaymentComponent';
@@ -37,8 +38,19 @@ class CartComponent extends React.Component {
 
   componentDidUpdate() {
     const {
-      cartState: { cart }
+      cartState: { cart },
+      singleOrderState: { paymentStatus },
+      paymentState
     } = this.props;
+    if (paymentStatus === orderConstants.PAYMENT_PROCESS_SUCCESS) {
+      setTimeout(() => {
+        paymentState('');
+        this.setState({
+          paymentVisible: false
+        });
+        this.props.history.push('/orders');
+      }, 5000);
+    }
     if (cart && cart.length > 0 && this.state.emptyCart) {
       this.setState({
         emptyCart: false
@@ -64,18 +76,28 @@ class CartComponent extends React.Component {
   }
 
   modalCloseHandler() {
-    this.setState({
-      paymentVisible: false
-    });
-    this.props.history.push('/orders');
+    const {
+      singleOrderState: { singleOrderStatus, paymentStatus }
+    } = this.props;
+    if (
+      singleOrderStatus !== orderConstants.SINGLE_ORDER_FETCHING &&
+      paymentStatus !== orderConstants.PAYMENT_PROCESSING
+    ) {
+      this.setState({
+        paymentVisible: false
+      });
+      this.props.history.push('/orders');
+    }
   }
 
   render() {
     const {
       cartState: { cart, status, createOrderStatus, orderId },
-      singleOrderState: { singleOrderStatus, singleOrder },
+      singleOrderState: { singleOrderStatus, singleOrder, paymentStatus },
       fetchSingleOrder,
-      createOrder
+      createOrder,
+      makePayment,
+      paymentState
     } = this.props;
     const cartItemsAvailable = status === constants.CART_FETCH_SUCCESS;
     const cartFetching =
@@ -197,6 +219,9 @@ class CartComponent extends React.Component {
                   singleOrderStatus={singleOrderStatus}
                   singleOrder={singleOrder}
                   orderId={orderId}
+                  makePayment={makePayment}
+                  paymentStatus={paymentStatus}
+                  paymentState={paymentState}
                   closeHandler={this.modalCloseHandler}
                 />
               )}

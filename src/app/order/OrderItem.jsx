@@ -32,7 +32,9 @@ class OrderItem extends React.Component {
                   order.status === 0 ? 'pay-button-active' : ''
                 }`}
                 onClick={() => {
-                  showPaymentComponent(order.order_id);
+                  if (order.status === 0) {
+                    showPaymentComponent(order.order_id);
+                  }
                 }}
               />
             </span>

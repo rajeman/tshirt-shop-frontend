@@ -22,6 +22,34 @@ const orderReducer = (state = defaultState, action) => {
         singleOrder
       };
     }
+
+    case constants.SET_PAYMENT_STATE: {
+      const { paymentStatus } = action;
+      return {
+        ...state,
+        paymentStatus
+      };
+    }
+
+    case constants.UPDATE_PAID_ORDER: {
+      const { orderId } = action;
+      const previousOrders = state.order;
+      let updatedOrders;
+      if (previousOrders) {
+        updatedOrders = previousOrders.map(order => {
+          if (order.order_id === orderId) {
+            return { ...order, status: 1 };
+          }
+          return order;
+        });
+      }
+
+      return {
+        ...state,
+        order: updatedOrders
+      };
+    }
+
     default:
       return state;
   }
