@@ -1,9 +1,10 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { Table, Button, Card, CardBody, CardText, CardImg } from 'reactstrap';
 import CartItem from './CartItem';
 import constants from './constants';
 import orderConstants from '../order/constants';
+import authConstants from '../auth/constants';
 import { Spinner } from '../loaders';
 import DeleteModal from '../modal/ModalComponent';
 import PaymentComponent from '../order/PaymentComponent';
@@ -94,6 +95,7 @@ class CartComponent extends React.Component {
     const {
       cartState: { cart, status, createOrderStatus, orderId },
       singleOrderState: { singleOrderStatus, singleOrder, paymentStatus },
+      authState: { authStatus },
       fetchSingleOrder,
       createOrder,
       makePayment,
@@ -126,6 +128,11 @@ class CartComponent extends React.Component {
                   <span className="cart-empty-text">
                     There are no items in your cart.
                   </span>
+                  <div className="mt-2">
+                    <Link to="/">
+                      <span> Click to start shopping</span>
+                    </Link>
+                  </div>
                 </CardText>
               </CardBody>
             </Card>
@@ -195,6 +202,10 @@ class CartComponent extends React.Component {
                         createOrderStatus !== constants.CREATING_ORDER && (
                           <Button
                             type="submit"
+                            disabled={
+                              authStatus !== authConstants.AUTH_SUCCESS &&
+                              !localStorage.getItem('BEARER_TOKEN')
+                            }
                             className="h-100 btn-secondary-active b-checkout mr-1"
                             onClick={e => {
                               e.preventDefault();
@@ -203,7 +214,10 @@ class CartComponent extends React.Component {
                             }}
                           >
                             <span className="color-extra bt-checkout-text">
-                              Checkout
+                              {authStatus !== authConstants.AUTH_SUCCESS &&
+                              !localStorage.getItem('BEARER_TOKEN')
+                                ? 'Login to Checkout'
+                                : 'Checkout'}
                             </span>
                           </Button>
                         )}

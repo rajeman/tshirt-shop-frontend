@@ -21,6 +21,8 @@ class _CardForm extends React.Component {
             .then(payload => {
               if (payload.token) {
                 startPaymentProcess(payload.token.id);
+              } else {
+                paymentState(constants.PAYMENT_PROCESS_ERROR);
               }
             })
             .catch(e => {
@@ -28,7 +30,8 @@ class _CardForm extends React.Component {
             });
         }}
       >
-        <CardElement />
+        {' '}
+        {<CardElement />}
         {paymentStatus === constants.PAYMENT_PROCESSING ||
         this.state.hidePayButton === true ? (
           <Spinner />

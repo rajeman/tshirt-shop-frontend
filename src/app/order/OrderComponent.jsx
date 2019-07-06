@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Table } from 'reactstrap';
 import { Spinner } from '../loaders';
 import OrderItem from './OrderItem';
@@ -73,29 +74,47 @@ class OrderComponent extends React.Component {
         )}
         {status === constants.ORDERS_FETCH_SUCCESS && (
           <div>
-            <Table className="">
-              <thead>
-                <tr>
-                  <th className="text-center">Order Id</th>
-                  <th className="text-center">Created On</th>
-                  <th className="text-center">Total Amount</th>
-                  <th className="text-center">Status</th>
-                  <th className="text-center">Pay</th>
-                </tr>
-              </thead>
-              <tbody>
-                {status === constants.ORDERS_FETCH_SUCCESS &&
-                  order.map(item => {
-                    return (
-                      <OrderItem
-                        key={item.order_id}
-                        order={item}
-                        showPaymentComponent={this.showPaymentComponent}
-                      />
-                    );
-                  })}
-              </tbody>
-            </Table>
+            {order && order.length === 0 ? (
+              <div className="text-center">
+                <img
+                  className="empty-order-image mt-5"
+                  src={`${
+                    process.env.PUBLIC_URL
+                  }/images/undraw_empty_order.svg`}
+                  alt="empty orders"
+                />
+                <div className="mt-2">
+                  <span>You have not made any order.</span>
+                  <Link to="/">
+                    <span> Click to start shopping</span>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <Table className="">
+                <thead>
+                  <tr>
+                    <th className="text-center">Order Id</th>
+                    <th className="text-center">Created On</th>
+                    <th className="text-center">Total Amount</th>
+                    <th className="text-center">Status</th>
+                    <th className="text-center">Pay</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {status === constants.ORDERS_FETCH_SUCCESS &&
+                    order.map(item => {
+                      return (
+                        <OrderItem
+                          key={item.order_id}
+                          order={item}
+                          showPaymentComponent={this.showPaymentComponent}
+                        />
+                      );
+                    })}
+                </tbody>
+              </Table>
+            )}
           </div>
         )}
         {this.state.showPayment && (

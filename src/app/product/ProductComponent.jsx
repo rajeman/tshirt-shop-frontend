@@ -111,15 +111,12 @@ class ProductComponent extends React.Component {
                     $
                     {product[productId].discounted_price === '0.00'
                       ? product[productId].price
-                      : (
-                          parseFloat(product[productId].price) -
-                          parseFloat(product[productId].discounted_price)
-                        ).toFixed(2)}{' '}
+                      : product[productId].discounted_price}{' '}
                   </span>
                   <span className="p-price-old color-extra">
                     {product[productId].discounted_price !== '0.00' && (
                       <span>
-                        $<s>{product[productId].discounted_price}</s>
+                        $<s>{product[productId].price}</s>
                       </span>
                     )}
                   </span>

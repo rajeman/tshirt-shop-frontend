@@ -40,6 +40,9 @@ const fetchOrders = () => async dispatch => {
     const orders = response.data;
     dispatch(orderState(constants.ORDERS_FETCH_SUCCESS, orders));
   } catch (error) {
+    error.response &&
+      error.response.status === 401 &&
+      localStorage.removeItem('BEARER_TOKEN');
     dispatch(orderState(constants.ORDERS_FETCH_ERROR, undefined));
   }
 };
@@ -57,7 +60,9 @@ const fetchSingleOrder = orderId => async dispatch => {
     const orders = response.data;
     dispatch(singleOrderState(constants.SINGLE_ORDER_FETCH_SUCCESS, orders));
   } catch (error) {
-    console.log(error);
+    error.response &&
+      error.response.status === 401 &&
+      localStorage.removeItem('BEARER_TOKEN');
     dispatch(singleOrderState(constants.SINGLE_ORDER_FETCH_ERROR, undefined));
   }
 };

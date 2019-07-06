@@ -1,5 +1,15 @@
 import React from 'react';
-import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
+import {
+  Navbar,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from 'reactstrap';
 import AuthContainer from '../auth/AuthContainer';
 import './navbar.css';
 import tshirtshop from '../assets/tshirtshop.png';
@@ -12,10 +22,12 @@ export default class NavbarComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showAuthForm: false
+      showAuthForm: false,
+      dropdownOpen: false
     };
     this.toggleAuthForm = this.toggleAuthForm.bind(this);
     this.removeModal = this.removeModal.bind(this);
+    this.toggleDropdown = this.toggleDropdown.bind(this);
   }
 
   toggleAuthForm() {
@@ -30,10 +42,15 @@ export default class NavbarComponent extends React.Component {
     });
   }
 
+  toggleDropdown() {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
+    }));
+  }
+
   render() {
     const { showAuthForm } = this.state;
     const userName = localStorage.getItem(constants.USER_NAME);
-    // this.fuckup.donothing();
     return (
       <div>
         <Navbar className="navbar navbar-light bg-dark">
@@ -58,7 +75,7 @@ export default class NavbarComponent extends React.Component {
                   className="d-inline-block pr-1"
                   onClick={this.toggleAuthForm}
                 >
-                  <span className="color-primary small">Sign In</span>
+                  <span className="color-primary small">Sign Up</span>
                 </NavLink>
                 |
               </NavItem>
@@ -76,26 +93,32 @@ export default class NavbarComponent extends React.Component {
           ) : (
             <Nav>
               <NavItem>
-                <NavLink>
-                  <span className="text-light mr-1">{userName}</span>
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink
-                  href="#"
-                  className="d-inline-block pl-1"
-                  onClick={() => {
-                    localStorage.removeItem(constants.USER_NAME);
-                    localStorage.removeItem(constants.BEARER_TOKEN);
-
-                    if (window.FB) {
-                      window.FB.logout(response => {});
-                    }
-                    this.props.dispatch(authState('', {}));
-                  }}
+                <Dropdown
+                  isOpen={this.state.dropdownOpen}
+                  toggle={this.toggleDropdown}
+                  className="mr-2"
                 >
-                  <span className="color-primary small">Logout</span>
-                </NavLink>
+                  <DropdownToggle caret>{userName}</DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem tag="a" href="/orders">
+                      My Orders
+                    </DropdownItem>
+                    <DropdownItem divider />
+                    <DropdownItem
+                      onClick={() => {
+                        localStorage.removeItem(constants.USER_NAME);
+                        localStorage.removeItem(constants.BEARER_TOKEN);
+
+                        if (window.FB) {
+                          window.FB.logout(response => {});
+                        }
+                        this.props.dispatch(authState('', {}));
+                      }}
+                    >
+                      Logout
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
               </NavItem>
             </Nav>
           )}

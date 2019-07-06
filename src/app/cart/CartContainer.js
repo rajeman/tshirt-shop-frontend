@@ -8,7 +8,8 @@ const { fetchSingleOrder, makePayment, paymentState } = singleOrderActions;
 
 const mapStateToProps = ({
   cart: { status, cart, createOrderStatus, orderId },
-  order: { singleOrderStatus, singleOrder, paymentStatus }
+  order: { singleOrderStatus, singleOrder, paymentStatus },
+  auth
 }) => {
   return {
     cartState: {
@@ -17,7 +18,8 @@ const mapStateToProps = ({
       createOrderStatus,
       orderId
     },
-    singleOrderState: { singleOrderStatus, singleOrder, paymentStatus }
+    singleOrderState: { singleOrderStatus, singleOrder, paymentStatus },
+    authState: { authStatus: auth.status }
   };
 };
 

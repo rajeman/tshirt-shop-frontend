@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FormGroup, Input } from 'reactstrap';
 
 class CartItem extends React.Component {
@@ -13,13 +14,16 @@ class CartItem extends React.Component {
     return (
       <tr className="cart-item-row">
         <td className="text-center">
-          <img
-            src={`${process.env.PUBLIC_URL}/images/${product.image}`}
-            alt="Card Cover"
-            className="cart-product-image"
-          />
-          <div className="mt-2 color-extra">{product.name}</div>
+          <Link to={`/products/${product.product_id}`}>
+            <img
+              src={`${process.env.PUBLIC_URL}/images/${product.image}`}
+              alt="Card Cover"
+              className="cart-product-image"
+            />
+            <div className="mt-2 color-extra">{product.name}</div>
+          </Link>
         </td>
+
         <td className="text-center">
           <div className="d-flex flex-column justify-content-center h-100">
             <span className="p-2 color-extra">
@@ -62,11 +66,7 @@ class CartItem extends React.Component {
             <span className="color-extra">
               {' '}
               {this.state.quantity
-                ? (
-                    (parseFloat(product.price) -
-                      parseFloat(product.discounted_price)) *
-                    this.state.quantity
-                  ).toFixed(2)
+                ? (parseFloat(product.price) * this.state.quantity).toFixed(2)
                 : product.subtotal}
             </span>
           </div>

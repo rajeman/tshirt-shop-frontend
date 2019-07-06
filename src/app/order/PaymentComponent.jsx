@@ -27,10 +27,7 @@ class PaymentComponent extends React.Component {
 
   startPaymentProcess(stripeToken) {
     const { makePayment } = this.props;
-    const amount = this.props.singleOrder
-      .reduce((total, product) => total + Number(product.sub_total), 0)
-      .toFixed(2);
-    makePayment(stripeToken, this.props.orderId, amount);
+    makePayment(stripeToken, this.props.orderId, this.total);
   }
 
   render() {
@@ -41,6 +38,14 @@ class PaymentComponent extends React.Component {
       paymentStatus,
       paymentState
     } = this.props;
+    if (singleOrderStatus === constants.SINGLE_ORDER_FETCH_SUCCESS) {
+      this.sum = singleOrder.reduce(
+        (total, product) => total + Number(product.sub_total),
+        0
+      );
+      this.tax = 0.085 * this.sum;
+      this.total = this.tax + this.sum + 20.0;
+    }
     return (
       <div>
         {
@@ -84,6 +89,43 @@ class PaymentComponent extends React.Component {
                                   key={checkoutItem.item_id}
                                 />
                               ))}
+                            <tr>
+                              <td />
+                              <td />
+                              <td />
+                              <td>
+                                <div className="d-flex flex-column justify-content-center align-items-center h-100">
+                                  <span className="color-extra">
+                                    Shipping:{' '}
+                                  </span>
+                                </div>
+                              </td>
+                              <td>
+                                <div className="d-flex flex-column justify-content-center align-items-center h-100">
+                                  <span className="color-extra">$20</span>
+                                </div>
+                              </td>
+                            </tr>
+                            {singleOrderStatus ===
+                              constants.SINGLE_ORDER_FETCH_SUCCESS && (
+                              <tr>
+                                <td />
+                                <td />
+                                <td />
+                                <td>
+                                  <div className="d-flex flex-column justify-content-center align-items-center h-100">
+                                    <span className="color-extra">Tax: </span>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="d-flex flex-column justify-content-center align-items-center h-100">
+                                    <span className="color-extra">
+                                      $ {this.tax.toFixed(2)}
+                                    </span>
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
                           </tbody>
                           <tfoot>
                             <tr>
@@ -93,14 +135,7 @@ class PaymentComponent extends React.Component {
                                   <div className="cart-total text-muted">
                                     <span>Total Price:</span>{' '}
                                     <span className="color-primary mr-2">
-                                      $
-                                      {singleOrder
-                                        .reduce(
-                                          (total, product) =>
-                                            total + Number(product.sub_total),
-                                          0
-                                        )
-                                        .toFixed(2)}
+                                      ${this.total.toFixed(2)}
                                     </span>
                                   </div>
                                 )}

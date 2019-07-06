@@ -152,6 +152,11 @@ const createOrder = () => async dispatch => {
     );
     localStorage.removeItem(constants.CART_ID);
   } catch (error) {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('BEARER_TOKEN');
+      localStorage.removeItem('USER_NAME');
+    }
+
     dispatch(
       createOrderState(constants.CREATE_ORDER_ERROR, {
         orderId: undefined

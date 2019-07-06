@@ -49,3 +49,13 @@ code {
 .pay-button-active:hover {
   cursor: pointer
 }
+
+.not-found-image,
+.empty-order-image {
+  height: auto;
+  width: 40%
+}
+
+.dropdown-toggle {
+  background: #e83e8c !important;
+}
