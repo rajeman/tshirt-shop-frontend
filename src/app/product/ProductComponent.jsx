@@ -28,14 +28,14 @@ class ProductComponent extends React.Component {
     this.forceUpdate();
   }
 
-  addToCart(attributes) {
+  addToCart(attributes, quantity) {
     const {
       match: {
         params: { productId }
       },
       addToCart
     } = this.props;
-    addToCart({ attributes, productId });
+    addToCart({ quantity, attributes, productId });
   }
 
   render() {

@@ -1,5 +1,9 @@
 TSHIRT SHOP API- A platform for shirt shopping.
 
+### APP URL
+
+- [https://tshirtshop-rajeman-frontend.herokuapp.com/](https://tshirtshop-rajeman-frontend.herokuapp.com/)
+
 #### Product Overview
 
 Tshirt Shop is an online platform for shopping various shirts. The application allows you to:
@@ -20,6 +24,6 @@ Tshirt Shop is an online platform for shopping various shirts. The application a
 - REACT
 - REDUX
 
-### APP URL
+### Acknowlegement
 
-- [https://tshirtshop-rajeman-frontend.herokuapp.com/](https://tshirtshop-rajeman-frontend.herokuapp.com/)
+This project is a challenge from [Turing](https://turing.ly)

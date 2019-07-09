@@ -74,15 +74,21 @@ const addToCart = product => async dispatch => {
     localStorage.setItem(constants.CART_ID, cartId);
   }
   try {
-    await axios.post(`${cartUrl}/add`, {
+    const response = await axios.post(`${cartUrl}/add`, {
       cart_id: cartId,
       product_id: parseInt(product.productId),
-      attributes: product.attributes
+      attributes: product.attributes,
+      quantity: parseInt(product.quantity, 10)
     });
     dispatch(cartAddState(constants.CART_ADD_SUCCESS));
-    toast.success('Product added to cart', {
-      position: toast.POSITION.TOP_RIGHT
-    });
+    toast.success(
+      response.status === 201
+        ? 'Product added to cart'
+        : 'Product updated in cart',
+      {
+        position: toast.POSITION.TOP_RIGHT
+      }
+    );
   } catch (error) {
     const errorMessage =
       error.response && error.response.data

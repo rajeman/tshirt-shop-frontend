@@ -24,9 +24,16 @@ class ProductAttributes extends React.Component {
         </FormGroup>
         <FormGroup>
           <Input
-            type="text"
+            type="number"
+            min={1}
+            max={1000000}
             value={this.state.quantity}
-            readOnly
+            onChange={e => {
+              const { value } = e.target;
+              this.setState({
+                quantity: value.replace(/[^0-9]/g, '') || 1
+              });
+            }}
             name="p-quantity"
             className="p-quantity"
           />
@@ -240,7 +247,7 @@ class ProductAttributes extends React.Component {
                 e.preventDefault();
                 const { color, size } = this.state;
                 const attributes = `${color}|${size}`;
-                addToCart(attributes);
+                addToCart(attributes, this.state.quantity);
               }}
             >
               <span className="color-extra bt-checkout-text">Add to cart</span>
